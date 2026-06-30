@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>أذكار المساء</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root {
+  --bg-primary: #0f0c29;
+  --bg-secondary: #302b63;
+  --bg-tertiary: #24243e;
+  --accent-primary: #667eea;
+  --accent-secondary: #764ba2;
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --card-bg: rgba(30, 27, 75, 0.6);
+  --card-border: rgba(139, 92, 246, 0.3);
+  --success: #10b981;
+  --success-glow: rgba(16, 185, 129, 0.4);
+}
+
+[data-theme="light"] {
+  --bg-primary: #f1f5f9;
+  --bg-secondary: #e2e8f0;
+  --bg-tertiary: #cbd5e1;
+  --accent-primary: #5b21b6;
+  --accent-secondary: #7c3aed;
+  --text-primary: #1e293b;
+  --text-secondary: #475569;
+  --card-bg: rgba(255, 255, 255, 0.9);
+  --card-border: rgba(124, 58, 237, 0.2);
+  --success: #059669;
+  --success-glow: rgba(5, 150, 105, 0.3);
+}
+
+* {
+  font-family: 'Cairo', sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.text-quran {
+  font-family: 'Amiri', serif;
+  line-height: 2.2;
+  font-size: 1.25rem;
+}
+
+body {
+  background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-tertiary) 100%);
+  min-height: 100vh;
+  color: var(--text-primary);
+  position: relative;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(118, 75, 162, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.stars {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.star {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  animation: twinkle 3s infinite;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 200px;
+  }
+}
+
+.dhikr-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--card-border);
+  animation: slideIn 0.4s ease-out backwards;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.dhikr-card.completed {
+  border: 2px solid var(--success);
+  box-shadow: 0 0 20px var(--success-glow), 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.counter-btn {
+  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.counter-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.counter-btn:active::before {
+  width: 300px;
+  height: 300px;
+}
+
+.counter-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+}
+
+.counter-btn.completed {
+  background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+  animation: pulse 0.5s ease;
+}
+
+.glass-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--card-border);
+}
+
+.progress-bar {
+  background: linear-gradient(90deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+  box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.theme-toggle, .reset-btn {
+  background: var(--card-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--card-border);
+}
+
+.theme-toggle:hover, .reset-btn:hover {
+  background: rgba(102, 126, 234, 0.2);
+  transform: translateY(-2px);
+}
+
+.checkmark {
+  animation: scaleIn 0.3s ease;
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0) rotate(-45deg);
+  }
+  to {
+    transform: scale(1) rotate(0);
+  }
+}
+
+.benefit-box {
+  animation: slideDown 0.3s ease;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--accent-primary);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-secondary);
+}
+
+@media (max-width: 640px) {
+  .text-quran {
+    font-size: 1.1rem;
+    line-height: 2;
+  }
+}
+</style>
+</head>
+<body>
+<div class="stars" id="stars"></div>
+
+<div class="relative z-10 min-h-screen pb-8">
+  <!-- Header -->
+  <header class="glass-card sticky top-0 z-50 shadow-lg">
+    <div class="max-w-6xl mx-auto px-4 py-4 sm:py-6">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center shadow-lg">
+            <i class="fas fa-moon text-white text-xl"></i>
+          </div>
+          <div>
+            <h1 class="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-purple-400 to-indigo-400 bg-clip-text text-transparent">أذكار المساء</h1>
+            <p class="text-sm text-gray-300" style="color: var(--text-secondary)">حصن المسلم في المساء</p>
+          </div>
+        </div>
+        
+        <div class="flex items-center gap-3">
+          <button id="resetBtn" class="reset-btn px-4 py-2 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 flex items-center gap-2">
+            <i class="fas fa-redo-alt"></i>
+            <span class="hidden sm:inline">إعادة ضبط</span>
+          </button>
+          <button id="themeToggle" class="theme-toggle px-4 py-2 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 flex items-center gap-2">
+            <i class="fas fa-sun text-yellow-400"></i>
+            <span class="hidden sm:inline">الوضع</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Progress Section -->
+      <div class="mt-6">
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-sm font-semibold" style="color: var(--text-secondary)">التقدم</span>
+          <span class="text-sm font-bold" id="progressText">0 / 24</span>
+        </div>
+        <div class="w-full h-3 rounded-full bg-gray-700 bg-opacity-30 overflow-hidden">
+          <div id="progressBar" class="progress-bar h-full rounded-full" style="width: 0%"></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-6xl mx-auto px-4 py-6 sm:py-8">
+    <div class="grid gap-4 sm:gap-6" id="athkarContainer"></div>
+  </main>
+
+  <!-- Completion Message -->
+  <div id="completionModal" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+    <div class="glass-card rounded-3xl p-8 max-w-md w-full text-center shadow-2xl transform scale-95 transition-all duration-300" id="modalContent">
+      <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center">
+        <i class="fas fa-check text-white text-4xl checkmark"></i>
+      </div>
+      <h2 class="text-3xl font-bold mb-2 bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">أحسنت!</h2>
+      <p class="text-lg mb-6" style="color: var(--text-secondary)">أتممت أذكار المساء كاملة</p>
+      <p class="text-sm mb-6 leading-relaxed" style="color: var(--text-secondary)">
+        تقبل الله منك صالح الأعمال<br>
+        وجعلك في حفظه ورعايته
+      </p>
+      <button id="closeModal" class="counter-btn w-full py-3 rounded-xl text-white font-bold text-lg shadow-lg">
+        الحمد لله
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+const athkarData = {
+  "category": "أذكار المساء",
+  "categoryId": "evening",
+  "items": [
+    {"text": "اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ ۚ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ ۚ لَّهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ ۗ مَن ذَا الَّذِي يَشْفَعُ عِندَهُ إِلَّا بِإِذْنِهِ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَيْءٍ مِّنْ عِلْمِهِ إِلَّا بِمَا شَاءَ ۚ وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ ۖ وَلَا يَئُودُهُ حِفْظُهُمَا ۚ وَهُوَ الْعَلِيُّ الْعَظِيمُ", "count": 1, "reference": "آيَةُ الْكُرْسِيِّ - سُورَةُ الْبَقَرَةِ ٢٥٥", "benefit": "مَنْ قَالَهَا حِينَ يُصْبِحُ أُجِيرَ مِنَ الْجِنِّ حَتَّى يُمْسِيَ، وَمَنْ قَالَهَا حِينَ يُمْسِي أُجِيرَ مِنَ الْجِنِّ حَتَّى يُصْبِحَ", "id": "evening_001"},
+    {"text": "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ\nقُلْ هُوَ اللَّهُ أَحَدٌ ﴿١﴾ اللَّهُ الصَّمَدُ ﴿٢﴾ لَمْ يَلِدْ وَلَمْ يُولَدْ ﴿٣﴾ وَلَمْ يَكُن لَّهُ كُفُوًا أَحَدٌ ﴿٤﴾", "count": 3, "reference": "سُورَةُ الْإِخْلَاصِ", "benefit": "مَنْ قَالَهَا حِينَ يُصْبِحُ وَحِينَ يُمْسِي كَفَتْهُ مِنْ كُلِّ شَيْءٍ", "id": "evening_002"},
+    {"text": "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ\nقُلْ أَعُوذُ بِرَبِّ الْفَلَقِ ﴿١﴾ مِن شَرِّ مَا خَلَقَ ﴿٢﴾ وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ ﴿٣﴾ وَمِن شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ ﴿٤﴾ وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ ﴿٥﴾", "count": 3, "reference": "سُورَةُ الْفَلَقِ", "benefit": "مَنْ قَالَهَا حِينَ يُصْبِحُ وَحِينَ يُمْسِي كَفَتْهُ مِنْ كُلِّ شَيْءٍ", "id": "evening_003"},
+    {"text": "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ\nقُلْ أَعُوذُ بِرَبِّ النَّاسِ ﴿١﴾ مَلِكِ النَّاسِ ﴿٢﴾ إِلَٰهِ النَّاسِ ﴿٣﴾ مِن شَرِّ الْوَسْوَاسِ الْخَنَّاسِ ﴿٤﴾ الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ ﴿٥﴾ مِنَ الْجِنَّةِ وَالنَّاسِ ﴿٦﴾", "count": 3, "reference": "سُورَةُ النَّاسِ", "benefit": "مَنْ قَالَهَا حِينَ يُصْبِحُ وَحِينَ يُمْسِي كَفَتْهُ مِنْ كُلِّ شَيْءٍ", "id": "evening_004"},
+    {"text": "أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ وَالْحَمْدُ لِلَّهِ، لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ، وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ، رَبِّ أَسْأَلُكَ خَيْرَ مَا فِي هَٰذِهِ اللَّيْلَةِ وَخَيْرَ مَا بَعْدَهَا، وَأَعُوذُ بِكَ مِنْ شَرِّ مَا فِي هَٰذِهِ اللَّيْلَةِ وَشَرِّ مَا بَعْدَهَا، رَبِّ أَعُوذُ بِكَ مِنَ الْكَسَلِ وَسُوءِ الْكِبَرِ، رَبِّ أَعُوذُ بِكَ مِنْ عَذَابٍ فِي النَّارِ وَعَذَابٍ فِي الْقَبْرِ", "count": 1, "reference": "رَوَاهُ مُسْلِمٌ", "benefit": "دُعَاءٌ عَظِيمٌ يَتَضَمَّنُ طَلَبَ الْخَيْرِ وَالْعُصْمَةِ مِنَ الشَّرِّ", "id": "evening_005"},
+    {"text": "اللَّهُمَّ بِكَ أَمْسَيْنَا وَبِكَ أَصْبَحْنَا، وَبِكَ نَحْيَا وَبِكَ نَمُوتُ وَإِلَيْكَ الْمَصِيرُ", "count": 1, "reference": "رَوَاهُ التِّرْمِذِيُّ", "benefit": "ثَابِتٌ عَنِ النَّبِيِّ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ مِنْ أَذْكَارِ الصَّبَاحِ وَالْمَسَاءِ", "id": "evening_006"},
+    {"text": "اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَٰهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَىٰ عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ، أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ وَأَبُوءُ بِذَنْبِي فَاغْفِرْ لِي فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ", "count": 1, "reference": "رَوَاهُ الْبُخَارِيُّ", "benefit": "مَنْ قَالَهَا مُوقِنًا بِهَا حِينَ يُمْسِي وَمَاتَ مِنْ لَيْلَتِهِ دَخَلَ الْجَنَّةَ، وَكَذَٰلِكَ حِينَ يُصْبِحُ", "id": "evening_007"},
+    {"text": "رَضِيتُ بِاللَّهِ رَبًّا وَبِالْإِسْلَامِ دِينًا وَبِمُحَمَّدٍ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ نَبِيًّا", "count": 3, "reference": "رَوَاهُ أَحْمَدُ وَأَبُو دَاوُدَ", "benefit": "مَنْ قَالَهَا حِينَ يُصْبِحُ وَحِينَ يُمْسِي كَانَ حَقًّا عَلَى اللَّهِ أَنْ يُرْضِيَهُ يَوْمَ الْقِيَامَةِ", "id": "evening_008"},
+    {"text": "اللَّهُمَّ إِنِّي أَمْسَيْتُ أُشْهِدُكَ، وَأُشْهِدُ حَمَلَةَ عَرْشِكَ، وَمَلَائِكَتَكَ، وَجَمِيعَ خَلْقِكَ، أَنَّكَ أَنْتَ اللَّهُ لَا إِلَٰهَ إِلَّا أَنْتَ وَحْدَكَ لَا شَرِيكَ لَكَ، وَأَنَّ مُحَمَّدًا عَبْدُكَ وَرَسُولُكَ", "count": 4, "reference": "رَوَاهُ أَبُو دَاوُدَ", "benefit": "مَنْ قَالَهَا أَعْتَقَهُ اللَّهُ مِنَ النَّارِ", "id": "evening_009"},
+    {"text": "اللَّهُمَّ مَا أَمْسَى بِي مِنْ نِعْمَةٍ أَوْ بِأَحَدٍ مِنْ خَلْقِكَ، فَمِنْكَ وَحْدَكَ لَا شَرِيكَ لَكَ، فَلَكَ الْحَمْدُ وَلَكَ الشُّكْرُ", "count": 1, "reference": "رَوَاهُ أَبُو دَاوُدَ", "benefit": "مَنْ قَالَهَا حِينَ يُمْسِي فَقَدْ أَدَّى شُكْرَ لَيْلَتِهِ", "id": "evening_010"},
+    {"text": "حَسْبِيَ اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ عَلَيْهِ تَوَكَّلْتُ وَهُوَ رَبُّ الْعَرْشِ الْعَظِيمِ", "count": 7, "reference": "رَوَاهُ أَبُو دَاوُدَ", "benefit": "مَنْ قَالَهَا كَفَاهُ اللَّهُ مَا أَهَمَّهُ مِنْ أَمْرِ الدُّنْيَا وَالْآخِرَةِ", "id": "evening_011"},
+    {"text": "بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ", "count": 3, "reference": "رَوَاهُ أَبُو دَاوُدَ وَالتِّرْمِذِيُّ", "benefit": "مَنْ قَالَهَا لَمْ يَضُرَّهُ مِنَ اللَّهِ شَيْءٌ", "id": "evening_012"},
+    {"text": "أَمْسَيْنَا عَلَىٰ فِطْرَةِ الْإِسْلَامِ، وَعَلَىٰ كَلِمَةِ الْإِخْلَاصِ، وَعَلَىٰ دِينِ نَبِيِّنَا مُحَمَّدٍ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ، وَعَلَىٰ مِلَّةِ أَبِينَا إِبْرَاهِيمَ حَنِيفًا مُسْلِمًا وَمَا كَانَ مِنَ الْمُشْرِكِينَ", "count": 1, "reference": "رَوَاهُ أَحْمَدُ", "benefit": "إِعْلَانٌ بِالِانْتِمَاءِ إِلَى الْإِسْلَامِ وَالتَّمَسُّكِ بِفِطْرَةِ التَّوْحِيدِ", "id": "evening_013"},
+    {"text": "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ", "count": 100, "reference": "مُتَّفَقٌ عَلَيْهِ", "benefit": "حُطَّتْ خَطَايَاهُ وَإِنْ كَانَتْ مِثْلَ زَبَدِ الْبَحْرِ. لَمْ يَأْتِ أَحَدٌ يَوْمَ الْقِيَامَةِ بِأَفْضَلَ مِمَّا جَاءَ بِهِ إِلَّا أَحَدٌ قَالَ مِثْلَ مَا قَالَ أَوْ زَادَ عَلَيْهِ", "id": "evening_014"},
+    {"text": "لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ", "count": 10, "reference": "مُتَّفَقٌ عَلَيْهِ", "benefit": "كَانَتْ لَهُ عِدْلَ عَشْرِ رِقَابٍ، وَكُتِبَتْ لَهُ مِائَةُ حَسَنَةٍ، وَمُحِيَتْ عَنْهُ مِائَةُ سَيِّئَةٍ، وَكَانَتْ لَهُ حِرْزًا مِنَ الشَّيْطَانِ", "id": "evening_015"},
+    {"text": "أَسْتَغْفِرُ اللَّهَ الْعَظِيمَ وَأَتُوبُ إِلَيْهِ", "count": 100, "reference": "رَوَاهُ الْبُخَارِيُّ وَمُسْلِمٌ", "benefit": "الاسْتِغْفَارُ يُكَفِّرُ الذُّنُوبَ وَيُيَسِّرُ الرِّزْقَ", "id": "evening_016"},
+    {"text": "اللَّهُمَّ صَلِّ وَسَلِّمْ وَبَارِكْ عَلَىٰ نَبِيِّنَا مُحَمَّدٍ", "count": 10, "reference": "رَوَاهُ الطَّبَرَانِيُّ", "benefit": "مَنْ صَلَّى عَلَيَّ حِينَ يُصْبِحُ وَحِينَ يُمْسِيَ أَدْرَكَتْهُ شَفَاعَتِي يَوْمَ الْقِيَامَةِ", "id": "evening_017"},
+    {"text": "أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ", "count": 3, "reference": "رَوَاهُ مُسْلِمٌ", "benefit": "لَمْ يَضُرَّهُ شَيْءٌ حَتَّى يَرْتَحِلَ مِنْ مَنْزِلِهِ، وَفِي رِوَايَةٍ: لَمْ تَضُرَّكَ إِذَا قُلْتَهَا حِينَ تُمْسِي", "id": "evening_018"},
+    {"text": "اللَّهُمَّ عَافِنِي فِي بَدَنِي، اللَّهُمَّ عَافِنِي فِي سَمْعِي، اللَّهُمَّ عَافِنِي فِي بَصَرِي، لَا إِلَٰهَ إِلَّا أَنْتَ", "count": 3, "reference": "رَوَاهُ أَبُو دَاوُدَ", "benefit": "دُعَاءٌ لِطَلَبِ الْعَافِيَةِ فِي الْبَدَنِ وَالْحَوَاسِّ", "id": "evening_019"},
+    {"text": "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْكُفْرِ وَالْفَقْرِ، وَأَعُوذُ بِكَ مِنْ عَذَابِ الْقَبْرِ، لَا إِلَٰهَ إِلَّا أَنْتَ", "count": 3, "reference": "رَوَاهُ أَبُو دَاوُدَ", "benefit": "الاستعاذةُ مِنَ الْكُفْرِ وَالْفَقْرِ وَعَذَابِ الْقَبْرِ", "id": "evening_020"},
+    {"text": "اللَّهُمَّ إِنِّي أَسْأَلُكَ الْعَفْوَ وَالْعَافِيَةَ فِي الدُّنْيَا وَالْآخِرَةِ، اللَّهُمَّ إِنِّي أَسْأَلُكَ الْعَفْوَ وَالْعَافِيَةَ فِي دِينِي وَدُنْيَايَ وَأَهْلِي وَمَالِي، اللَّهُمَّ اسْتُرْ عَوْرَاتِي وَآمِنْ رَوْعَاتِي، اللَّهُمَّ احْفَظْنِي مِنْ بَيْنِ يَدَيَّ وَمِنْ خَلْفِي وَعَنْ يَمِينِي وَعَنْ شِمَالِي وَمِنْ فَوْقِي، وَأَعُوذُ بِعَظَمَتِكَ أَنْ أُغْتَالَ مِنْ تَحْتِي", "count": 1, "reference": "رَوَاهُ أَبُو دَاوُدَ وَابْنُ مَاجَهْ", "benefit": "دُعَاءٌ شَامِلٌ لِطَلَبِ الْعَفْوِ وَالْعَافِيَةِ وَالْحِفْظِ مِنْ جَمِيعِ الْجَوَاهِبِ", "id": "evening_021"},
+    {"text": "يَا حَيُّ يَا قَيُّومُ بِرَحْمَتِكَ أَسْتَغِيثُ أَصْلِحْ لِي شَأْنِي كُلَّهُ وَلَا تَكِلْنِي إِلَىٰ نَفْسِي طَرْفَةَ عَيْنٍ", "count": 3, "reference": "رَوَاهُ الْحَاكِمُ", "benefit": "دُعَاءٌ لِإِصْلَاحِ الشَّأْنِ وَالِاسْتِعَانَةِ بِالرَّحْمَنِ", "id": "evening_022"},
+    {"text": "أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ رَبِّ الْعَالَمِينَ، اللَّهُمَّ إِنِّي أَسْأَلُكَ خَيْرَ هَٰذِهِ اللَّيْلَةِ فَتْحَهَا وَنَصْرَهَا وَنُورَهَا وَبَرَكَتَهَا وَهُدَاهَا، وَأَعُوذُ بِكَ مِنْ شَرِّ مَا فِيهَا وَشَرِّ مَا بَعْدَهَا", "count": 1, "reference": "رَوَاهُ أَبُو دَاوُدَ", "benefit": "دُعَاءٌ لِطَلَبِ خَيْرِ اللَّيْلَةِ وَالْعُصْمَةِ مِنْ شَرِّهَا", "id": "evening_023"},
+    {"text": "اللَّهُمَّ عَالِمَ الْغَيْبِ وَالشَّهَادَةِ فَاطِرَ السَّمَاوَاتِ وَالْأَرْضِ رَبَّ كُلِّ شَيْءٍ وَمَلِيكَهُ، أَشْهَدُ أَنْ لَا إِلَٰهَ إِلَّا أَنْتَ، أَعُوذُ بِكَ مِنْ شَرِّ نَفْسِي وَمِنْ شَرِّ الشَّيْطَانِ وَشِرْكِهِ، وَأَنْ أَقْتَرِفَ عَلَىٰ نَفْسِي سُوءًا أَوْ أَجُرَّهُ إِلَىٰ مُسْلِمٍ", "count": 1, "reference": "رَوَاهُ أَبُو دَاوُدَ وَالتِّرْمِذِيُّ", "benefit": "الاستعاذةُ مِنْ شَرِّ النَّفْسِ وَالشَّيْطَانِ وَالشِّرْكِ", "id": "evening_024"}
+  ]
+};
+
+// State management
+let counts = {};
+let theme = 'dark';
+
+// Initialize
+function init() {
+  loadFromStorage();
+  createStars();
+  renderAthkar();
+  updateProgress();
+  initTheme();
+  
+  document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+  document.getElementById('resetBtn').addEventListener('click', resetAll);
+  document.getElementById('closeModal').addEventListener('click', closeModal);
+}
+
+// LocalStorage
+function loadFromStorage() {
+  const stored = localStorage.getItem('eveningAthkarCounts');
+  if (stored) counts = JSON.parse(stored);
+  
+  athkarData.items.forEach(item => {
+    if (!counts[item.id]) counts[item.id] = 0;
+  });
+}
+
+function saveToStorage() {
+  localStorage.setItem('eveningAthkarCounts', JSON.stringify(counts));
+}
+
+function loadTheme() {
+  const stored = localStorage.getItem('theme');
+  return stored || 'dark';
+}
+
+function saveTheme() {
+  localStorage.setItem('theme', theme);
+}
+
+// Stars background
+function createStars() {
+  const starsContainer = document.getElementById('stars');
+  for (let i = 0; i < 100; i++) {
+    const star = document.createElement('div');
+    star.className = 'star';
+    star.style.width = Math.random() * 3 + 'px';
+    star.style.height = star.style.width;
+    star.style.left = Math.random() * 100 + '%';
+    star.style.top = Math.random() * 100 + '%';
+    star.style.animationDelay = Math.random() * 3 + 's';
+    star.style.animationDuration = Math.random() * 2 + 2 + 's';
+    starsContainer.appendChild(star);
+  }
+}
+
+// Render
+function renderAthkar() {
+  const container = document.getElementById('athkarContainer');
+  container.innerHTML = '';
+  
+  athkarData.items.forEach((item, index) => {
+    const currentCount = counts[item.id] || 0;
+    const isCompleted = currentCount >= item.count;
+    const percentage = (currentCount / item.count) * 100;
+    
+    const card = document.createElement('div');
+    card.className = `dhikr-card rounded-2xl p-5 sm:p-6 ${isCompleted ? 'completed' : ''}`;
+    card.style.animationDelay = `${index * 0.05}s`;
+    
+    card.innerHTML = `
+      <div class="flex flex-col gap-4">
+        <div class="flex items-start justify-between gap-3">
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-3">
+              ${isCompleted ? '<i class="fas fa-check-circle text-green-500 text-xl checkmark"></i>' : '<i class="far fa-circle text-purple-400 text-xl"></i>'}
+              <span class="text-xs font-semibold px-3 py-1 rounded-full" style="background: rgba(102, 126, 234, 0.2); color: var(--accent-primary)">
+                ${currentCount} / ${item.count}
+              </span>
+            </div>
+            <p class="text-quran mb-4 leading-relaxed" style="color: var(--text-primary); white-space: pre-line;">${item.text}</p>
+            
+            <div class="flex flex-wrap gap-2 mb-3">
+              <div class="flex items-center gap-2 text-sm px-3 py-1 rounded-lg" style="background: rgba(102, 126, 234, 0.1); color: var(--text-secondary)">
+                <i class="fas fa-book text-xs"></i>
+                <span>${item.reference}</span>
+              </div>
+            </div>
+            
+            <div class="benefit-box rounded-xl p-3 mb-3" style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2)">
+              <div class="flex items-start gap-2">
+                <i class="fas fa-star text-yellow-500 text-sm mt-1"></i>
+                <p class="text-sm" style="color: var(--text-secondary)">${item.benefit}</p>
+              </div>
+            </div>
+            
+            ${!isCompleted ? `
+              <div class="w-full h-1.5 rounded-full bg-gray-700 bg-opacity-30 overflow-hidden">
+                <div class="h-full rounded-full bg-gradient-to-r from-purple-500 to-indigo-500 transition-all duration-500" style="width: ${percentage}%"></div>
+              </div>
+            ` : ''}
+          </div>
+        </div>
+        
+        <button 
+          class="counter-btn w-full py-4 rounded-xl text-white font-bold text-lg shadow-lg transition-all duration-300 ${isCompleted ? 'completed' : ''}"
+          data-id="${item.id}"
+          ${isCompleted ? 'disabled' : ''}>
+          ${isCompleted ? '<i class="fas fa-check ml-2"></i> تم الإكمال' : `
+            <i class="fas fa-hand-point-up ml-2"></i>
+            اضغط للتسبيح
+          `}
+        </button>
+      </div>
+    `;
+    
+    container.appendChild(card);
+  });
+  
+  // Add event listeners
+  document.querySelectorAll('.counter-btn').forEach(btn => {
+    if (!btn.disabled) {
+      btn.addEventListener('click', handleCounterClick);
+    }
+  });
+  
+  updateProgress();
+}
+
+function handleCounterClick(e) {
+  const id = e.currentTarget.dataset.id;
+  const item = athkarData.items.find(i => i.id === id);
+  
+  if (counts[id] < item.count) {
+    counts[id]++;
+    saveToStorage();
+    
+    // Haptic feedback simulation
+    if (navigator.vibrate) navigator.vibrate(50);
+    
+    renderAthkar();
+    checkCompletion();
+  }
+}
+
+function updateProgress() {
+  const completed = athkarData.items.filter(item => counts[item.id] >= item.count).length;
+  const total = athkarData.items.length;
+  const percentage = (completed / total) * 100;
+  
+  document.getElementById('progressBar').style.width = percentage + '%';
+  document.getElementById('progressText').textContent = `${completed} / ${total}`;
+}
+
+function checkCompletion() {
+  const allCompleted = athkarData.items.every(item => counts[item.id] >= item.count);
+  if (allCompleted && !localStorage.getItem('eveningAthkarCompleted')) {
+    localStorage.setItem('eveningAthkarCompleted', 'true');
+    showCompletionModal();
+  }
+}
+
+function showCompletionModal() {
+  const modal = document.getElementById('completionModal');
+  const content = document.getElementById('modalContent');
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+  setTimeout(() => {
+    content.classList.remove('scale-95');
+    content.classList.add('scale-100');
+  }, 10);
+}
+
+function closeModal() {
+  const modal = document.getElementById('completionModal');
+  const content = document.getElementById('modalContent');
+  content.classList.remove('scale-100');
+  content.classList.add('scale-95');
+  setTimeout(() => {
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }, 300);
+}
+
+function resetAll() {
+  if (confirm('هل تريد إعادة ضبط جميع العدادات؟')) {
+    athkarData.items.forEach(item => {
+      counts[item.id] = 0;
+    });
+    localStorage.removeItem('eveningAthkarCompleted');
+    saveToStorage();
+    renderAthkar();
+  }
+}
+
+// Theme
+function initTheme() {
+  theme = loadTheme();
+  document.body.setAttribute('data-theme', theme);
+  updateThemeIcon();
+}
+
+function toggleTheme() {
+  theme = theme === 'dark' ? 'light' : 'dark';
+  document.body.setAttribute('data-theme', theme);
+  saveTheme();
+  updateThemeIcon();
+}
+
+function updateThemeIcon() {
+  const icon = document.querySelector('#themeToggle i');
+  if (theme === 'dark') {
+    icon.className = 'fas fa-sun text-yellow-400';
+  } else {
+    icon.className = 'fas fa-moon text-indigo-400';
+  }
+}
+
+// Start app
+init();
+</script>
+<script>(function(){document.addEventListener("click",function(e){var a=e.target.closest("[data-product-id]");if(!a)return;e.preventDefault();var pid=a.getAttribute("data-product-id");if(pid)parent.postMessage({type:"ecto-artifact-link-click",productId:pid},"*")})})();</script>
+</body>
+</html>
